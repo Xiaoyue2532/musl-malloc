@@ -19,7 +19,7 @@ extern "C" {
 
 #if defined(__clang__) || defined(__GNUC__)
 # define RPMALLOC_EXPORT static
-# define RPMALLOC_ALLOCATOR 
+# define RPMALLOC_ALLOCATOR
 # if (defined(__clang_major__) && (__clang_major__ < 4)) || (defined(__GNUC__) && defined(ENABLE_PRELOAD) && ENABLE_PRELOAD)
 # define RPMALLOC_ATTRIB_MALLOC
 # define RPMALLOC_ATTRIB_ALLOC_SIZE(size)
@@ -186,7 +186,10 @@ typedef struct rpmalloc_config_t {
 	//  For Windows, see https://docs.microsoft.com/en-us/windows/desktop/memory/large-page-support
 	//  For Linux, see https://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt
 	int enable_huge_pages;
-	int unused;
+	//! Respectively allocated pages and huge allocated pages names for systems
+ 	//  supporting it to be able to distinguish among anonymous regions.
+ 	const char *page_name;
+ 	const char *huge_page_name;
 } rpmalloc_config_t;
 
 //! Initialize allocator with default configuration
@@ -289,6 +292,10 @@ rpposix_memalign(void** memptr, size_t alignment, size_t size);
 RPMALLOC_EXPORT size_t
 rpmalloc_usable_size(void* ptr);
 
+//! Dummy empty function for forcing linker symbol inclusion
+RPMALLOC_EXPORT void
+rpmalloc_linker_reference(void);
+
 #if RPMALLOC_FIRST_CLASS_HEAPS
 
 //! Heap type
@@ -325,7 +332,7 @@ rpmalloc_heap_calloc(rpmalloc_heap_t* heap, size_t num, size_t size) RPMALLOC_AT
 //  and should ideally be less than memory page size. A caveat of rpmalloc
 //  internals is that this must also be strictly less than the span size (default 64KiB).
 RPMALLOC_EXPORT RPMALLOC_ALLOCATOR void*
-rpmalloc_heap_aligned_calloc(rpmalloc_heap_t* heap, size_t alignment, size_t num, size_t size) RPMALLOC_ATTRIB_MALLOC RPMALLOC_ATTRIB_ALLOC_SIZE2(2, 3);
+rpmalloc_heap_aligned_calloc(rpmalloc_heap_t* heap, size_t alignment, size_t num, size_t size) RPMALLOC_ATTRIB_MALLOC RPMALLOC_ATTRIB_ALLOC_SIZE2(3, 4);
 
 //! Reallocate the given block to at least the given size. The memory block MUST be allocated
 //  by the same heap given to this function.
@@ -354,6 +361,10 @@ rpmalloc_heap_free_all(rpmalloc_heap_t* heap);
 //  current heap for the calling thread is released to be reused by other threads.
 RPMALLOC_EXPORT void
 rpmalloc_heap_thread_set_current(rpmalloc_heap_t* heap);
+
+//! Returns which heap the given pointer is allocated on
+RPMALLOC_EXPORT rpmalloc_heap_t*
+rpmalloc_get_heap_for_ptr(void* ptr);
 
 #endif
 
