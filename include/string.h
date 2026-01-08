@@ -97,6 +97,8 @@ void *memrchr(const void *, int, size_t);
 void *mempcpy(void *, const void *, size_t);
 #endif
 
+#include <fortify/string.h>
+
 #ifdef __cplusplus
 }
 #endif

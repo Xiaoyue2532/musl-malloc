@@ -172,6 +172,8 @@ long double strtold_l(const char *__restrict, char **__restrict, struct __locale
 #endif
 #endif
 
+#include <fortify/stdlib.h>
+
 #ifdef __cplusplus
 }
 #endif

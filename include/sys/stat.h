@@ -199,6 +199,8 @@ __REDIR(futimens, __futimens_time64);
 __REDIR(utimensat, __utimensat_time64);
 #endif
 
+#include <fortify/stat.h>
+
 #ifdef __cplusplus
 }
 #endif
