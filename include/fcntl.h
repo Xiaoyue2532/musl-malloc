@@ -20,6 +20,7 @@ extern "C" {
 #include <bits/alltypes.h>
 
 #include <bits/fcntl.h>
+#include <fortify/fcntl.h>
 
 struct flock {
 	short l_type;
@@ -184,6 +185,7 @@ struct f_owner_ex {
 #define SPLICE_F_MORE 4
 #define SPLICE_F_GIFT 8
 int fallocate(int, int, off_t, off_t);
+#define fallocate64 fallocate
 int name_to_handle_at(int, const char *, struct file_handle *, int *, int);
 int open_by_handle_at(int, struct file_handle *, int);
 ssize_t readahead(int, off_t, size_t);
@@ -206,10 +208,7 @@ ssize_t tee(int, int, size_t, unsigned);
 #define posix_fadvise64 posix_fadvise
 #define posix_fallocate64 posix_fallocate
 #define off64_t off_t
-#define fallocate64 fallocate
 #endif
-
-#include <fortify/fcntl.h>
 
 #ifdef __cplusplus
 }
